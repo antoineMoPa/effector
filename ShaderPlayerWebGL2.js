@@ -1,6 +1,6 @@
 class ShaderPlayerWebGL2 {
   constructor() {
-    this.fps = 10;
+    this.fps = 30;
     this.compiled = false;
     this.canvas = document.createElement('canvas');
     this.gl = null;
@@ -43,7 +43,7 @@ class ShaderPlayerWebGL2 {
 
     {
       // Init canvas
-      const gl = this.canvas.getContext('webgl2');
+      const gl = this.canvas.getContext('webgl2', {preserveDrawingBuffer: true});
 
       // Detect webgl2 native problems
       // (read: my old laptop's graphics card is too old)
@@ -87,6 +87,12 @@ class ShaderPlayerWebGL2 {
 
   set_width(w) {
     this.width = w;
+    this.update();
+  }
+
+  set_size(w, h) {
+    this.width = w;
+    this.height = h;
     this.update();
   }
 
@@ -143,7 +149,14 @@ class ShaderPlayerWebGL2 {
 
     // TODO: rename this update_program
     this.init_program();
-    this.animate();
+
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+
+    if (!this.anim_already_started)
+      this.animate();
+    else
+      this.draw_gl();
   }
 
   // Took from MDN:
@@ -305,6 +318,11 @@ class ShaderPlayerWebGL2 {
     const tri = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tri);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    console.log(this.on_compiled);
+    if (this.on_compiled)
+      this.on_compiled();
+
     this.compiled = true;
   }
 
@@ -334,9 +352,8 @@ class ShaderPlayerWebGL2 {
 
     gl.program = gl.createProgram();
 
-    const vertex_shader =      add_shader(gl.VERTEX_SHADER, this.vertex_shader);
-
-    const fragment_shader =      add_shader(gl.FRAGMENT_SHADER, this.fragment_shader);
+    const vertex_shader   = add_shader(gl.VERTEX_SHADER, this.vertex_shader);
+    const fragment_shader = add_shader(gl.FRAGMENT_SHADER, this.fragment_shader);
 
     this.fragment_shader_object = fragment_shader;
     this.vertex_shader_object = vertex_shader;
@@ -346,14 +363,12 @@ class ShaderPlayerWebGL2 {
       gl.shaderSource(shader, content);
       gl.compileShader(shader);
 
-      // TODO: Find out right error pre
-
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         const err = gl.getShaderInfoLog(shader);
 
         player.on_error_listener(err);
       } else {
-        //
+        player.on_error_listener("");
       }
 
       gl.attachShader(gl.program, shader);
@@ -426,6 +441,14 @@ class ShaderPlayerWebGL2 {
     // Find some resonable time for next computation
     const deltat = (this.lastChunk - this.audioCtx.currentTime) * 1000 - 500;
     this.timeout = window.setTimeout(this.play_sound.bind(this), deltat);
+  }
+
+  set_float_uniform(name, value) {
+    const gl = this.gl;
+    if (gl == null || gl.program == null || typeof gl.program === 'undefined') {
+      return;
+    }
+    gl.uniform1f(gl.getUniformLocation(gl.program, name), value);
   }
 
   draw_gl(time) {
@@ -550,11 +573,12 @@ class ShaderPlayerWebGL2 {
     function _animate() {
       const anim_delay = Math.floor(1000 / this.fps);
 
-      frame %= (this.frames);
+      let animDurationMS = 10000;
+      let time = (((new Date()).getTime()) % animDurationMS);
 
       // When rendering gif, draw is done elsewhere
       if (!player.rendering_gif && player.window_focused) {
-        player.draw_gl((frame + 1) / player.frames);
+        player.draw_gl(time);
       }
 
       this.anim_timeout = window.setTimeout(() => {
