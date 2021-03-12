@@ -9,13 +9,12 @@ uniform float ratio, time;
 uniform sampler2D texture0;
 uniform sampler2D texture1;
 
-uniform float vignette;
-uniform float distort;
-uniform float noise;
-uniform float noise_frequency;
-uniform float fade;
+uniform float vignette;        // custom_uniform {"name" : "vignette", "humanName": "Vignette"}
+uniform float distort;         // custom_uniform {"name" : "distort", "humanName": "Distort"}
+uniform float noise;           // custom_uniform {"name" : "noise", "humanName": "Noise"}
+uniform float noise_frequency; // custom_uniform {"name" : "noise_frequency", "humanName": "Noise Frequency"}
+uniform float fade;            // custom_uniform {"name" : "fade", "humanName": "Fade", "defaultValue": 0.1}
 
-#define time (time * 0.1)
 #define PI 3.1416
 #define PI2 (2.0 * PI)
 

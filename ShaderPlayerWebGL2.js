@@ -573,8 +573,8 @@ class ShaderPlayerWebGL2 {
     function _animate() {
       const anim_delay = Math.floor(1000 / this.fps);
 
-      let animDurationMS = 10000;
-      let time = (((new Date()).getTime()) % animDurationMS);
+      let animDurationMS = 3000;
+      let time = (((new Date()).getTime()) % animDurationMS) / animDurationMS;
 
       // When rendering gif, draw is done elsewhere
       if (!player.rendering_gif && player.window_focused) {

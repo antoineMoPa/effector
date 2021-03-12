@@ -4,9 +4,10 @@ precision highp float;
 in vec2 UV;
 uniform vec2 mouse;
 out vec4 out_color;
+uniform float ratio;
 
 void main(void) {
-  vec2 p = vec2(UV.x, UV.y) - vec2(0.5, 0.5);
+  vec2 p = vec2(UV.x * ratio, UV.y) - vec2(0.5 * ratio, 0.5);
   out_color = vec4(0.0);
 
   if (p.y < 0.0)

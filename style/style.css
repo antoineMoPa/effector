@@ -1,29 +1,65 @@
-*{
+* {
   margin:0;
   padding:0;
 }
 
-html{
+html {
   min-height:100%;
 }
 
-body{
+body {
   padding-top: 40px;
   background: radial-gradient(circle at center, #000000, #07030f);
   font-family: sans;
 }
 
-canvas{
+canvas {
   display:block;
   margin:auto;
   box-shadow:0 0 30px rgba(255,255,255,0.05);
   border-radius:3px;
   max-width:100%;
   max-height:100%;
+  transition:all 0.3s;
 }
 
-.error-container{
+.error-container {
   color:#ff33aa;
   max-width:1000px;
   margin:auto;
+}
+
+.transparent-box {
+  background: #fff;
+  border-radius: 3px;
+  width: 400px;
+  height: calc(100% - 160px);
+  padding: 40px;
+  opacity: 0;
+  transition: all 0.3s;
+  overflow-y: auto;
+}
+
+effector-settings-panel {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+}
+
+.transparent-box:hover {
+  opacity: 1;
+}
+
+input {
+  width: 100%;
+}
+
+effector-settings-panel label {
+  font-weight: 300;
+}
+
+effector-sketch-list {
+  position: absolute;
+  top: 40px;
+  left: 40px;
 }
