@@ -19,7 +19,7 @@ uniform float fade;            // custom_uniform {"name" : "fade", "humanName": 
 #define PI2 (2.0 * PI)
 
 vec2 UVGlitcher(vec2 UV, float offset) {
-  float t = time * 0.03;
+  float t = time * 6.0;
   float vhs = (0.2 + 0.1 * cos(t)) *
     cos(UV.y * 10.0 + 0.3 * tan(UV.y * 10.0 + t + offset) + 1.0 * t);
 
