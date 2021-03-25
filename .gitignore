@@ -1,0 +1,4 @@
+sketches/**
+*.jpg
+*.png
+node_modules/**

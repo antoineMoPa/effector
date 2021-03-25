@@ -1,0 +1,26 @@
+{
+  "name": "effector",
+  "version": "0.0.1",
+  "description": "A tool to tweak and preview a collection of shaders",
+  "scripts": {
+    "start": "electron . --no-sandbox",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antoineMoPa/effector.git"
+  },
+  "author": "antoineMoPa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/antoineMoPa/effector/issues"
+  },
+  "homepage": "https://github.com/antoineMoPa/effector#readme",
+  "devDependencies": {
+    "electron": "^12.0.2"
+  },
+  "main": "main.js",
+  "dependencies": {
+    "glob": "^7.1.6"
+  }
+}

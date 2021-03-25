@@ -32,9 +32,10 @@ canvas {
 .transparent-box {
   background: #fff;
   border-radius: 3px;
-  width: 400px;
+  width: 300px;
+  max-width: 30%;
   height: calc(100% - 160px);
-  padding: 40px;
+  padding: 20px;
   opacity: 0;
   transition: all 0.3s;
   overflow-y: auto;
