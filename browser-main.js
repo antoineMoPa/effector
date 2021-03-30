@@ -133,8 +133,18 @@ customElements.define('effector-effector', class extends HTMLElement {
     this.imageWidth = this.baseWidth * this.scale;
     this.imageHeight = this.baseHeight * this.scale;
 
-    player.add_texture("foreground.png");
-    player.add_texture("background.jpg");
+    //player.add_texture("foreground.png");
+    //player.add_texture("background.jpg");
+    player.add_texture("fg2.png", function(w, h){
+      this.baseWidth = w;
+      this.baseHeight = h;
+      this.imageWidth = this.baseWidth * this.scale;
+      this.imageHeight = this.baseHeight * this.scale;
+      player.set_width(this.imageWidth);
+      player.set_height(this.imageHeight);
+    });
+    player.add_texture("bg2.png");
+
     player.set_width(this.imageWidth);
     player.set_height(this.imageHeight);
 

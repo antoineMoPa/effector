@@ -164,7 +164,9 @@ class ShaderPlayerWebGL2 {
   // Initialize a texture and load an image.
   // When the image finished loading copy it into the texture.
   //
-  add_texture(url) {
+  add_texture(url, _options) {
+    let options = _options || {};
+    options.onload = options.onload || function () {};
     function isPowerOf2(value) {
       return (value & (value - 1)) == 0;
     }
@@ -198,6 +200,8 @@ class ShaderPlayerWebGL2 {
       gl.texImage2D(
         gl.TEXTURE_2D, level, internalFormat,
         srcFormat, srcType, image);
+
+      options.onload(image.width, image.height);
 
       // WebGL1 has different requirements for power of 2 images
       // vs non power of 2 images so check if the image is a
@@ -573,7 +577,7 @@ class ShaderPlayerWebGL2 {
     function _animate() {
       const anim_delay = Math.floor(1000 / this.fps);
 
-      let animDurationMS = 3000;
+      let animDurationMS = 10000;
       let time = (((new Date()).getTime()) % animDurationMS) / animDurationMS;
 
       // When rendering gif, draw is done elsewhere
