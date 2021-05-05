@@ -120,30 +120,26 @@ customElements.define('effector-effector', class extends HTMLElement {
 
     this.scale = 0.4;
 
-    // 8x8 @ 300dpi
-    this.baseWidth = 2400;
-    this.baseHeight = 2400;
-
-    this.baseWidth = 1398;
-    this.baseHeight = 1920;
-    // 18x24 @ 300dpi
-    // this.baseWidth = 4500 * this.scale;
-    // this.baseHeight = 6000 * this.scale;
+    this.baseWidth = 100;
+    this.baseHeight = 100;
 
     this.imageWidth = this.baseWidth * this.scale;
     this.imageHeight = this.baseHeight * this.scale;
 
-    //player.add_texture("foreground.png");
-    //player.add_texture("background.jpg");
-    player.add_texture("fg2.png", function(w, h){
-      this.baseWidth = w;
-      this.baseHeight = h;
-      this.imageWidth = this.baseWidth * this.scale;
-      this.imageHeight = this.baseHeight * this.scale;
-      player.set_width(this.imageWidth);
-      player.set_height(this.imageHeight);
+    const background = "bg3.png";
+    const foreground = "fg3.png";
+
+    player.add_texture(foreground, {
+      onload: function(w, h){
+        console.log(w,h);
+        this.baseWidth = w;
+        this.baseHeight = h;
+        this.imageWidth = this.baseWidth * this.scale;
+        this.imageHeight = this.baseHeight * this.scale;
+        player.set_size(w, h);
+      }.bind(this)
     });
-    player.add_texture("bg2.png");
+    player.add_texture(background);
 
     player.set_width(this.imageWidth);
     player.set_height(this.imageHeight);

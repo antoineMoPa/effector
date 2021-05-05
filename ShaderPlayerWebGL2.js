@@ -93,7 +93,8 @@ class ShaderPlayerWebGL2 {
   set_size(w, h) {
     this.width = w;
     this.height = h;
-    this.update();
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
   }
 
   set_height(h) {
@@ -577,7 +578,7 @@ class ShaderPlayerWebGL2 {
     function _animate() {
       const anim_delay = Math.floor(1000 / this.fps);
 
-      let animDurationMS = 10000;
+      let animDurationMS = 1000;
       let time = (((new Date()).getTime()) % animDurationMS) / animDurationMS;
 
       // When rendering gif, draw is done elsewhere
