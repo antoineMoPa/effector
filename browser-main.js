@@ -1,3 +1,5 @@
+let api = {};
+
 customElements.define('effector-settings-panel', class extends HTMLElement {
   constructor() {
     super();
@@ -84,7 +86,6 @@ customElements.define('effector-sketch-list', class extends HTMLElement {
           reject(err)
         } else {
           resolve(files);
-          console.log(files);
         }
       });
     });
@@ -106,6 +107,66 @@ customElements.define('effector-sketch-list', class extends HTMLElement {
   }
 });
 
+customElements.define('image-picker', class extends HTMLElement {
+  constructor() {
+    super();
+    this.render();
+  }
+
+
+  async render() {
+    this.innerHTML += `
+      <input type="file" name="${this.getAttribute('name')}">
+    `;
+
+    let input = this.querySelectorAll("input")[0];
+    input.addEventListener("change", function(e){
+      e.stopPropagation();
+      if (input.files.length == 0)
+        return;
+
+      this.dispatchEvent(new CustomEvent('change', {
+        detail: {
+          path: input.files[0].path
+        }
+      }));
+    }.bind(this));
+  }
+});
+
+
+customElements.define('effector-image-chooser', class extends HTMLElement {
+  constructor() {
+    super();
+    this.render();
+  }
+
+  async render() {
+    this.innerHTML += `
+      <fieldset>
+        <label>Background file</label>
+        <image-picker name="background-image" value="./"></image-picker>
+        <label>Foreground file</label>
+        <image-picker name="foreground-image"></image-picker>
+      </fieldset>
+    `;
+
+    let bgPicker = this.querySelectorAll("[name=background-image]")[0];
+
+    bgPicker.addEventListener("change", function(e){
+      api.effector.set_background(e.detail.path);
+    }.bind(this));
+
+    let fgPicker = this.querySelectorAll("[name=foreground-image]")[0];
+
+    fgPicker.addEventListener("change", function(e){
+      api.effector.set_foreground(e.detail.path);
+    }.bind(this));
+
+  }
+});
+
+
 customElements.define('effector-effector', class extends HTMLElement {
   constructor() {
     super();
@@ -126,20 +187,27 @@ customElements.define('effector-effector', class extends HTMLElement {
     this.imageWidth = this.baseWidth * this.scale;
     this.imageHeight = this.baseHeight * this.scale;
 
-    const background = "bg3.png";
-    const foreground = "fg3.png";
+    api.effector = {};
+    api.effector.set_foreground = function(path) {
+      player.set_texture(path, "foreground", {
+        onload: function(w, h){
+          console.log(w,h);
+          this.baseWidth = w;
+          this.baseHeight = h;
+          this.imageWidth = this.baseWidth * this.scale;
+          this.imageHeight = this.baseHeight * this.scale;
+          player.set_size(w, h);
+        }.bind(this)
+      });
+    }.bind(this);
 
-    player.add_texture(foreground, {
-      onload: function(w, h){
-        console.log(w,h);
-        this.baseWidth = w;
-        this.baseHeight = h;
-        this.imageWidth = this.baseWidth * this.scale;
-        this.imageHeight = this.baseHeight * this.scale;
-        player.set_size(w, h);
-      }.bind(this)
-    });
-    player.add_texture(background);
+    api.effector.set_background = function(path) {
+      player.set_texture(path, "background");
+    }.bind(this);
+
+    api.effector.set_foreground("./fg2.png");
+    api.effector.set_background("./bg2.png");
+
 
     player.set_width(this.imageWidth);
     player.set_height(this.imageHeight);
@@ -156,8 +224,12 @@ customElements.define('effector-effector', class extends HTMLElement {
     player.set_on_error_listener(this.onError.bind(this));
 
     this.insertAdjacentHTML("beforeend", `
-       <effector-sketch-list class="transparent-box">
-       </effector-sketch-list>
+       <div class="transparent-box left-panel">
+          <effector-image-chooser>
+          </effector-image-chooser>
+          <effector-sketch-list>
+          </effector-sketch-list>
+       </div>
        <effector-settings-panel class="transparent-box">
        </effector-settings-panel>
     `);

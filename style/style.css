@@ -36,7 +36,7 @@ canvas {
   max-width: 30%;
   height: calc(100% - 160px);
   padding: 20px;
-  opacity: 0;
+  opacity: 0.1;
   transition: all 0.3s;
   overflow-y: auto;
 }
@@ -59,8 +59,12 @@ effector-settings-panel label {
   font-weight: 300;
 }
 
-effector-sketch-list {
+.left-panel {
   position: absolute;
   top: 40px;
   left: 40px;
+}
+
+label{
+  font-weight:300;
 }

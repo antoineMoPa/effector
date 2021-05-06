@@ -10,7 +10,7 @@ class ShaderPlayerWebGL2 {
     this.framebuffer = [];
     this.renderbuffer = [];
     this.renderBufferDim = [];
-    this.textures = [];
+    this.textures = {};
     this.passes_defined_in_code = false;
     this.frames_defined_in_code = false;
     this.native_webgl2_supported = false;
@@ -160,12 +160,14 @@ class ShaderPlayerWebGL2 {
       this.draw_gl();
   }
 
+
+
   // Took from MDN:
   // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
   // Initialize a texture and load an image.
   // When the image finished loading copy it into the texture.
   //
-  add_texture(url, _options) {
+  set_texture(url, name, _options) {
     let options = _options || {};
     options.onload = options.onload || function () {};
     function isPowerOf2(value) {
@@ -173,6 +175,9 @@ class ShaderPlayerWebGL2 {
     }
 
     const gl = this.gl;
+
+    if (this.textures[name] != undefined)
+      this.delete_texture(name);
 
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -220,13 +225,13 @@ class ShaderPlayerWebGL2 {
     };
     image.src = url;
 
-    this.textures.push(texture);
+    this.textures[name] = texture;
   }
 
-  delete_texture(index) {
+  delete_texture(name) {
     const gl = this.gl;
-    gl.deleteTexture(this.textures[index]);
-    this.textures.splice(index, 1);
+    gl.deleteTexture(this.textures[name]);
+    delete this.textures[name];
   }
 
   // Recursive dom tool to find page offset
@@ -496,11 +501,20 @@ class ShaderPlayerWebGL2 {
         gl.uniform1i(att, i);
       }
 
-      for (let j = 0; j < this.textures.length; j++, i++) {
+      for (let name in this.textures) {
         gl.activeTexture(gl.TEXTURE0 + i);
-        var att = gl.getUniformLocation(gl.program, `texture${j}`);
-        gl.bindTexture(gl.TEXTURE_2D, this.textures[j]);
+        var att = gl.getUniformLocation(gl.program, name);
+        gl.bindTexture(gl.TEXTURE_2D, this.textures[name]);
+
+        // Legacy compatibility
+        let nameMap = {background: "texture1", foreground: "texture0"};
+        for (let n in nameMap) {
+          var att = gl.getUniformLocation(gl.program, nameMap[name]);
+          gl.bindTexture(gl.TEXTURE_2D, this.textures[name]);
+        }
+
         gl.uniform1i(att, i);
+        i++;
       }
 
       gl.uniform2fv(
