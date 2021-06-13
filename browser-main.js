@@ -181,8 +181,9 @@ customElements.define('effector-effector', class extends HTMLElement {
 
     this.scale = 0.4;
 
-    this.baseWidth = 100;
-    this.baseHeight = 100;
+    let menusSize = 400;
+    this.baseWidth = window.innerWidth - menusSize;
+    this.baseHeight = this.baseWidth;
 
     this.imageWidth = this.baseWidth * this.scale;
     this.imageHeight = this.baseHeight * this.scale;
